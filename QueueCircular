@@ -1,0 +1,85 @@
+import java.util.Scanner;
+
+public class QueueCircular<T> {
+    private int top = -1;
+    private int base = 0;
+    private T[] data;
+    private int size;
+
+    public QueueCircular(int size) {
+        this.size = size;
+        data = (T[]) new Object[size];
+    }
+
+    public void add(T item) {
+        if (isFull()) {
+            System.out.println("Fila cheia. Não é possível adicionar o elemento: " + item);
+            return;
+        }
+        top = move(top);
+        data[top] = item;
+    }
+
+    public T remove() {
+        if (isEmpty()) {
+            System.out.println("Fila vazia.");
+            return null;
+        }
+        T itemRemovido = data[base];
+        data[base] = null;
+        base = move(base);
+        if (base == move(top)) {
+            top = -1;
+            base = 0;
+        }
+        return itemRemovido;
+    }
+
+    public void clear() {
+        top = -1;
+        base = 0;
+        data = (T[]) new Object[size];
+    }
+
+    public boolean isFull() {
+        return move(top) == base && data[base] != null;
+    }
+
+    public boolean isEmpty() {
+        return top == -1;
+    }
+
+    private int move(int position) {
+        return (position + 1) % size;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite o tamanho máximo da fila: ");
+        int maxSize = scanner.nextInt();
+
+        QueueCircular<Integer> queue = new QueueCircular<>(maxSize);
+
+        System.out.print("Quantos elementos você quer adicionar na fila? ");
+        int numElements = scanner.nextInt();
+
+        for (int i = 1; i <= numElements; i++) {
+            queue.add(i);
+        }
+        System.out.print("Você deseja (1) apenas adicionar os elementos ou (2) adicionar e remover os elementos? ");
+        int choice = scanner.nextInt();
+
+        if (choice == 2) {
+            while (!queue.isEmpty()) {
+                System.out.println("Elemento removido: " + queue.remove());
+            }
+        } else if (choice == 1) {
+            System.out.println("Os elementos foram adicionados à fila.");
+        } else {
+            System.out.println("Opção inválida. Nenhuma ação adicional será realizada.");
+        }
+
+        scanner.close();
+    }
+}
